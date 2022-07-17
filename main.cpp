@@ -1,21 +1,50 @@
 #include <iostream>
-#include <stdlib.h>
 #include <ctime>
 #include <string>
 #include <cstdlib>
-using namespace std;
+#include "draw.h"
+#include <windows.h>
 
+using namespace std;
+//teste git
 void limpaTela(){
     system("CLS");
 }
 
 void mostraStatus(string maskedPalavra, int tentativas, int tamanhoPalavra,string letrasChutadas){
+    //Switch que defini qual a aparencia do desenho
+    switch (tentativas)
+    {
+    case 1:
+        drawStage5();
+        break;
+     case 2:
+        drawStage4();
+        break;
+    case 3:
+        drawStage3();
+        break;
+     case 4:
+        drawStage2();
+        break;
+    case 5:
+        drawStage1();
+        break;
+     case 6:
+        drawStage0();
+        break;
+    
+    }
+    
+    system("Color 07");    // Defini a cor para Branca
     cout << "Palavra: " << maskedPalavra << endl;
     cout << "Tamanho da palavra: " << tamanhoPalavra << endl;
     cout <<  "Letras ja Usadas: ";
+
     for(int i = 0;i < letrasChutadas.size();i++){
         cout << letrasChutadas[i] << ", ";
     }
+
     cout << "\nTentativas restantes: " << tentativas << endl;
 }
 
@@ -46,7 +75,7 @@ string returnMaskedPalavra(string palavra, int tamanhoPalavra){
 
 
 int jogar(int multiplayer){
-    //Palavra a ser adivinhada
+    //Palavra a ser adivinhada.
     //------------------------
     string palavra;
 
@@ -58,22 +87,25 @@ int jogar(int multiplayer){
     }
     else palavra = retornaPalavraRandom();
 
-    //pega o numero de letras na palavra a ser advinhada
-    //-------------------------------------------
+    //pega o numero de letras na palavra a ser advinhada.
+    //---------------------------------------------------
     int tamanhoPalavra = palavra.size();
     string maskedPalavra = returnMaskedPalavra(palavra, tamanhoPalavra);
 
-    //Variaveis Principais
+    //Variaveis Principais.
     //-------------------
-    int tentativas = 5;
+    int tentativas = 6;
     int jogarDnv;
-    char aux;        //Usuario come�a com 5 tentativas
-    char letra;                //Pega valor que o usuario digitar
+    char aux;                    //Usuario começa com 5 tentativas.
+    char letra;                  //Pega valor que o usuario digitar.
     bool acertouLetra;
-    bool letraJaChutada;         //Verifica se a letra existe na palavra
-    string letrasChutadas;       //Letras que o usuario ja tentou
+    bool letraJaChutada;         //Verifica se a letra existe na palavra.
+    string letrasChutadas;       //Letras que o usuario ja tentou.
     string chutarPalavra;
 
+
+    //Começo do While.
+    //***************
     while(palavra != maskedPalavra && tentativas > 0){
 
         limpaTela();
@@ -88,20 +120,19 @@ int jogar(int multiplayer){
         //-------------------------------------
         if(letra == '1'){
             cout << "que palavra vc acha que eh? ";
-            cin >> chutarPalavra;                            //Pega a string que o player digitou
+            cin >> chutarPalavra;                            //Pega a string que o player digitou.
 
-            if(chutarPalavra == palavra){                    //Se o usuario acertar a palavra
-                maskedPalavra = chutarPalavra;               //Revela a palavra terminando o jogo
-                cout << "Parabens vc venceu!\n" << endl;       //Da mensagem de vitoria
-            }else   tentativas = 0;                          //se não, zera as tentativas do jogador
+            if(chutarPalavra == palavra){              //Se o usuario acertar a palavra.                         
+                maskedPalavra = chutarPalavra;               
+            }else   tentativas = 0;                          
         }
 
 
         //Verifica se o usuario ja tentou a mesma letra.
         //----------------------------------------------
         for(int i = 0; i < letrasChutadas.size(); i++){
-            if(tolower(letra) == letrasChutadas[i]){        //Se o a letra que o player dugutou ja foi tentada antes,
-                letraJaChutada = true;                      //defini letraJaChutada como true
+            if(tolower(letra) == letrasChutadas[i]){        //Se a letra que o player digitou ja foi arriscada antes,
+                letraJaChutada = true;                      //defini letraJaChutada como true.
             }
         }
         //Caso o usario tente uma letra pela 1ª vez, concatena essa letra na string "letrasChutadas".
@@ -125,22 +156,37 @@ int jogar(int multiplayer){
             tentativas--;
         }
         letraJaChutada = false;
-        //FIM DO WHILE
+        
+        //************
+        //FIM DO WHILE.
+        //************
     }
 
 
     //Se a string masked for igual a palavra escolhida o jogo acaba e mostra a mensagem de vitoria/derrota.
     //----------------------------------------------------------------------------------------------------
-    if(maskedPalavra == palavra)
-        {
+    if(palavra == maskedPalavra){
             limpaTela();
+            system("Color 02");
             cout << "Parabens vc venceu!" << endl;
-        }else cout << "\nGAME OVER, vc perdeu  :'( \na palavra certa era: " << palavra << "\n" << endl;  //
-
-
+            cout <<  "\\O/   " << endl;
+            cout <<  " |   " << endl;
+            cout <<  "/ \\   " << endl;
+        }
+    else{
+            limpaTela();
+            system("Color 04");     // Muda para cor vermelha
+            cout << "\nGAME OVER, vc perdeu :'(" << endl;
+            drawStage6();
+            cout << "\n"; 
+            cout << "A palavra certa era: " << palavra << endl;
+        }   
+    
+    //Pergunta se o player quer jogar novamente.
+    //------------------------------------------
     cout << "Deseja jogar novamente?" << endl;
-    cout << "1 - Sim" << endl;
-    cout << "2 - Nao (volta para o menu)" << endl;
+    cout << "1 - Sim" << endl;                        //se digitar 1 a função jogar() é chamada novamente.
+    cout << "2 - Nao (volta para o menu)" << endl;    //se digitar 2, volta para o menu().
     cin >> jogarDnv;
     return jogarDnv;
 }
@@ -152,7 +198,9 @@ void mostraMenu(){
     //Menu do inicial do jogo.
     //-----------------------
     while(option != 4 ){
-
+        
+        limpaTela();
+        system("Color 07");
         cout << "Bem vindo ao Jogo" << endl;
         cout << "1 - Jogar sozinho" << endl;
         cout << "2 - jogar em dupla" << endl;
@@ -198,10 +246,7 @@ void mostraMenu(){
 
 
 int main(){
+mostraMenu();
 
- mostraMenu();
-
-
-
-    return 0;
+return 0;
 }
